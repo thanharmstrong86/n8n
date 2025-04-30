@@ -1,0 +1,341 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Emotion Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Intent Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Bias Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Emotion Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intent Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Bias Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Final Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Agent": {
+      "main": [
+        [
+          {
+            "node": "Write to Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Emotion Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Final Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Bias Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Intent Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-04-01T10:41:19.327Z",
+  "id": "aAyThk0uGb7y0dsO",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Parallelization",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# Parallelization\n✅ Faster Analysis – Instead of sequential analysis, all aspects are evaluated in parallel.\n\n✅ Specialized AI Agents – Each LLM focuses on a single analytical area, improving accuracy.\n\n✅ Comprehensive Review – The final aggregation step ensures clarity and a well-structured report.\n\n✅ Scalability – Can be extended to analyze additional text properties (e.g., readability, factual accuracy).",
+        "height": 240,
+        "width": 760,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        740,
+        720
+      ],
+      "typeVersion": 1,
+      "id": "29699d0b-2d80-4a36-abc0-43c4de6872f0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Analyze the emotional tone of the incoming text. Categorize it as positive, negative, neutral, or mixed. Provide a brief explanation."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        280,
+        360
+      ],
+      "id": "1280f125-4fe2-4499-978e-4f27f7b42804",
+      "name": "Emotion Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Analyze the intent behind this text. Classify it as informational, persuasive, aggressive, or neutral. Provide reasoning."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        280,
+        580
+      ],
+      "id": "e2d37a2d-443d-474f-abc5-6b04203fa4f2",
+      "name": "Intent Agent"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Analyze this text for potential biases. Identify if it exhibits political, gender, racial, or other biases. Suggest ways to make it more neutral."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        280,
+        780
+      ],
+      "id": "00f8044b-5642-4bb7-adfe-b6451ce657c7",
+      "name": "Bias Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -140,
+        520
+      ],
+      "id": "d157ee4e-1477-4e39-b6de-7e14677c6583",
+      "name": "When chat message received",
+      "webhookId": "ac25dd9f-b310-4daa-9c49-db68a2433ef1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        820,
+        460
+      ],
+      "id": "7db2af0d-6a55-4d17-8685-dd03e0051d2d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1040,
+        520
+      ],
+      "id": "67c43760-33cf-4dc6-b197-8e8c385058d9",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "output"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        520
+      ],
+      "id": "49dccd76-1e72-4943-8d34-09e241e5ca38",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the analysis: \n\n{{ $json.output }}",
+        "options": {
+          "systemMessage": "Merge the incoming emotional tone, intent, and bias analysis into a structured report. Ensure it is clear, concise, and actionable."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1360,
+        520
+      ],
+      "id": "f7098d55-e5bc-4117-80e4-539e10820f38",
+      "name": "Final Agent"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "https://docs.google.com/document/d/1GH8LZX-k74pomeSnWM15zge1V3vip6_StTSqr9YdM9A/edit?usp=sharing",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        520
+      ],
+      "id": "8ab74671-eaa5-41a2-bc03-1042309faf66",
+      "name": "Write to Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "ClLkHpoTBbZUR6dH",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        20,
+        880
+      ],
+      "id": "bb1e8559-78a6-48d3-83e8-eae7b23b5531",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ch0P4OmRB6XBfTK4",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "I don't trust mainstream media anymore. They always push specific agenda and ignore real issues. People need to wake up and stop believing what they see on the news"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        180
+      ],
+      "id": "cbe9b3e0-c31a-4f41-b36e-f67758f6dfc8",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-04-15T15:16:31.742Z",
+  "versionId": "2dd8566c-66c9-432b-92d2-e79cab2b0a12"
+}
