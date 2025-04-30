@@ -1,0 +1,355 @@
+{
+  "active": false,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Facebook Graph API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-02-08T04:09:15.224Z",
+  "id": "at579wWW1ovlQ7ks",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Auto content Fanpage",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "02e63cc0-306e-4018-be3a-ff2fa09a0291",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -60,
+        -60
+      ],
+      "id": "3acc4651-7eed-4df3-8762-804a0a45203e",
+      "name": "Webhook",
+      "webhookId": "02e63cc0-306e-4018-be3a-ff2fa09a0291"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.Title }}\n",
+        "options": {
+          "systemMessage": "=you are an AI assistant. Please write an short content with title {{ $json.body.Title }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        140,
+        20
+      ],
+      "id": "49787cbd-fdc8-4f58-bfcf-4d51cba68cca",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        160,
+        180
+      ],
+      "id": "b4537a88-b5e9-4db5-a512-1b12f2f65aad",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Xmgf2omXp4G4WQdg",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "FaceBook: \nhttps://developers.facebook.com/tools/explorer\n1. Meta app: choose app\n2. User or page -> Get User token -> confirm  user : Add 3 permission : \n_pages_show_list\n_pages_read_engagement\n_pages_manage_posts\n3. User or page -> Get Page token -> confirm page\n4. User or page -> choose page token -> copy access token\n5. Tool -> access token debug -> pass access token -> extend token -> copy extend token\n6. Use extend token as api key in n8n\n",
+        "height": 340,
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        540,
+        260
+      ],
+      "id": "8334c129-9381-4fb5-9f2b-85c0471d2878",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Google sheet webhook:\n1. Add a \"Processed\" Column to Your Google Sheet\n2. In your Google Sheet, go to the menu and select Extensions > Apps Script. This opens the Google Apps Script editor in a new tab.\n3. Set Up the Trigger\nIn the script editor, click the clock icon (Triggers) \nClick + Add Trigger in the bottom-right corner.\nConfigure the trigger with these settings:\n_ function to run: onChangeTrigger\n_ deployment: Head\n_ event source: From spreadsheet\n_ event type: On change\nClick Save. (If prompted, confirm permission)\n4. Google sheet -> Extension -> macro -> import",
+        "height": 320,
+        "width": 360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        260
+      ],
+      "id": "5649a88b-bd9f-4efa-92db-74b499a0f100",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://black-forest-labs-flux-1-schnell.hf.space/call/infer",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": [\n    \"{{ $json.body.Title }}\",\n    0,\n    true,\n    512,\n    512,\n    1\n  ]\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        -160
+      ],
+      "id": "2cb39448-29ad-4dcb-8b5d-7aa5d7d57dc8",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "url": "=https://black-forest-labs-flux-1-schnell.hf.space/call/infer/{{ $json.event_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        -160
+      ],
+      "id": "c6d9807c-b97d-46e3-9cf9-12ef1cab251e",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        520,
+        -40
+      ],
+      "id": "cb805ffe-f831-4e00-b026-c050b6ca6518",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v22.0",
+        "node": "me",
+        "edge": "photos",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "message",
+                "value": "={{ $json.content }}"
+              },
+              {
+                "name": "url",
+                "value": "={{ $json.image }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -40
+      ],
+      "id": "d569500d-cc76-4086-a48e-d689c976df6b",
+      "name": "Facebook Graph API",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "NA33tsfhYj8AvGH8",
+          "name": "Facebook Graph account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Image Generate\n",
+        "height": 180,
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        140,
+        -200
+      ],
+      "id": "b40823a4-7a46-44e5-a4e3-0af177e9749c",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3bec746d-788c-464a-8c08-8b22c9adf06e",
+              "name": "=content",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "f81cbf9f-33ea-4e4e-b4bd-2d897550fda9",
+              "name": "image",
+              "value": "={{ $json.data.split(\",\")[1].split('url\": ')[1].replaceAll('\"','') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        700,
+        -40
+      ],
+      "id": "19e7ffe1-1fc3-4af0-b38b-414643c784b2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        300,
+        240
+      ],
+      "id": "c168e5c9-85be-4944-a5f5-1ff212c3f095",
+      "name": "Calculator"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Google Sheets Trigger": {
+      "documentId": "1Ti7Zgd8Ubn1Hfa53bbsqzeVhB_Kht-6SpBv2yITim4g",
+      "sheetId": 363321071,
+      "lastIndexChecked": 7
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-03-12T07:10:20.000Z",
+  "versionId": "5062a9cc-5d76-4b8a-b153-0d6c2a09aaab"
+}
