@@ -1,0 +1,447 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Long Term Memories",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Retrieve Notes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Chat Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Long Term Memories": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Long Term Memories": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Notes": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Notes": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-03-08T16:05:43.133Z",
+  "id": "c60vUjZ3bKtQg36M",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Long Term Memory chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -460,
+        -40
+      ],
+      "id": "aa322e19-98ba-4436-bc63-4ef49487aec3",
+      "name": "When chat message received",
+      "webhookId": "8a16ed04-1a8b-4681-8946-64f311e2bbd4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "options": {
+          "systemMessage": "=## ROLE  \nYou are a friendly, attentive, and helpful AI assistant. Your primary goal is to assist the user while maintaining a personalized and engaging interaction.  \n\n---\n\n## RULES  \n\n1. **Memory Management**:  \n   - When the user sends a new message, evaluate whether it contains noteworthy or personal information (e.g., preferences, habits, goals, or important events).  \n   - If such information is identified, use the **Save Memory** tool to store this data in memory.  \n   - Always send a meaningful response back to the user, even if your primary action was saving information. This response should not reveal that information was stored but should acknowledge or engage with the user’s input naturally.  \n\n2. **Note Management**:  \n   - If the user provides information that is intended to be stored as a note (e.g., specific instructions, reminders, or standalone pieces of information), use the **Save Note** tool.  \n   - Notes should not be stored in memory using the **Save Memory** tool.  \n   - Ensure that notes are clear, concise, and accurately reflect the user’s input.  \n\n3. **Context Awareness**:  \n   - Use stored memories and notes to provide contextually relevant and personalized responses.  \n   - Always consider the **date and time** when a memory or note was collected to ensure your responses are up-to-date and accurate.\n\n4. **User-Centric Responses**:  \n   - Tailor your responses based on the user's preferences and past interactions.  \n   - Be proactive in recalling relevant details from memory or notes when appropriate but avoid overwhelming the user with unnecessary information.\n\n5. **Privacy and Sensitivity**:  \n   - Handle all user data with care and sensitivity. Avoid making assumptions or sharing stored information unless it directly enhances the conversation or task at hand.\n   - Never store passwords or usernames.\n\n6. **Fallback Responses**:  \n   - **IMPORTANT** If no specific task or question arises from the user’s message (e.g., when only saving information), respond in a way that keeps the conversation flowing naturally. For example:  \n     - Acknowledge their input: “Thanks for sharing that!”  \n     - Provide a friendly follow-up: “Is there anything else I can help you with today?”  \n   - DO NOT tell jokes as a fallback response.\n\n---\n\n## TOOLS  \n\n### Save Memory  \n- Use this tool to store summarized, concise, and meaningful information about the user.  \n- Extract key details from user messages that could enhance future interactions (e.g., likes/dislikes, important dates, hobbies).  \n- Ensure that the summary is clear and devoid of unnecessary details.\n\n### Save Note  \n- Use this tool to store specific instructions, reminders, or standalone pieces of information provided by the user.  \n- Notes should not include general personal preferences or habits meant for long-term memory storage.  \n- Ensure that notes are concise and accurately reflect what the user wants to store.\n\n---\n\n## MEMORIES  \n\n### Recent Noteworthy Memories  \nHere are the most recent memories collected from the user, including their date and time of collection:  \n\n**{{ $json.data[0].content }}**\n\n### Guidelines for Using Memories:  \n- Prioritize recent memories but do not disregard older ones if they remain relevant.  \n- Cross-reference memories to maintain consistency in your responses. For example, if a user shares conflicting preferences over time, clarify or adapt accordingly.\n\n---\n\n## NOTES  \n\n### Recent Notes Collected from User:  \nHere are the most recent notes collected from the user:  \n\n**{{ $json.data[1].content }}**\n\n### Guidelines for Using Notes:  \n- Use notes for tasks requiring specific instructions or reminders.\n- Do not mix note content with general memory content; keep them distinct.\n\n---\n\n## ADDITIONAL INSTRUCTIONS  \n\n- Think critically before responding to ensure your answers are thoughtful and accurate.  \n- Strive to build trust with the user by being consistent, reliable, and personable in your interactions.  \n- Avoid robotic or overly formal language; aim for a conversational tone that aligns with being \"friendly and helpful.\"  \n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        400,
+        -200
+      ],
+      "id": "bc6a85a5-929a-49cd-9e58-c4afd11f3088",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "llama3.2:3b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        320,
+        480
+      ],
+      "id": "771a0c5a-8c27-4ef7-a615-5e5843abd9aa",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "N6d9iBCpKlOWpGkL",
+          "name": "Ollama account local"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Save Memory",
+        "operation": "update",
+        "documentURL": "https://docs.google.com/document/d/1aq1zkDPF-U6GWDErb6sAMFrBx5jQPcmPxSeB9LlMCYI/edit?tab=t.0",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={ \n  \"memory\": \"{{ $fromAI('memory') }}\",\n  \"date\": \"{{ $now }}\"\n}"
+            }
+          ]
+        }
+      },
+      "id": "d3c03a17-740b-4989-9a4f-a0457c64af15",
+      "name": "Save Long Term Memories",
+      "type": "n8n-nodes-base.googleDocsTool",
+      "position": [
+        440,
+        140
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "ClLkHpoTBbZUR6dH",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Save Long Term Memories\nGoogle Docs",
+        "height": 280,
+        "color": 4
+      },
+      "id": "82e8bbeb-bad0-4231-948f-a1ec2bf68cb4",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        360,
+        40
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Retrieve Long Term Memories\nGoogle Docs",
+        "height": 280,
+        "width": 260,
+        "color": 4
+      },
+      "id": "ef67a669-023a-4929-afdb-f9008b8bb786",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -260,
+        -300
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1aq1zkDPF-U6GWDErb6sAMFrBx5jQPcmPxSeB9LlMCYI/edit?tab=t.0"
+      },
+      "id": "ff892005-42e0-4298-b944-9dc64678c0f7",
+      "name": "Retrieve Long Term Memories",
+      "type": "n8n-nodes-base.googleDocs",
+      "position": [
+        -180,
+        -200
+      ],
+      "typeVersion": 2,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "ClLkHpoTBbZUR6dH",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        80,
+        -200
+      ],
+      "id": "ae261175-ee9f-4d38-8137-c3c6dd5d3c38",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "content": "## Save Notes\nGoogle Docs",
+        "height": 280,
+        "width": 220,
+        "color": 4
+      },
+      "id": "1af6a36c-be11-4133-bae2-ed61d54ce1f1",
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        640,
+        40
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Save Notes",
+        "operation": "update",
+        "documentURL": "https://docs.google.com/document/d/13Sv6JB1cjquMdZQiiM1Ah99IRYGyV4BCriYTUS_LZQw/edit?usp=sharing",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={ \n  \"note\": \"{{ $fromAI('memory') }}\",\n  \"date\": \"{{ $now }}\"\n}"
+            }
+          ]
+        }
+      },
+      "id": "bef3533e-75a9-49b3-ae11-ed444e2dac60",
+      "name": "Save Notes",
+      "type": "n8n-nodes-base.googleDocsTool",
+      "position": [
+        700,
+        140
+      ],
+      "typeVersion": 2,
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "ClLkHpoTBbZUR6dH",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Retrieve Notes\nGoogle Docs",
+        "height": 240,
+        "width": 280,
+        "color": 4
+      },
+      "id": "7c55e5ba-ba4f-4b26-8ea0-64a5389e5502",
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -260,
+        40
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/13Sv6JB1cjquMdZQiiM1Ah99IRYGyV4BCriYTUS_LZQw/edit?usp=sharing"
+      },
+      "id": "48f05545-a1ac-4937-b4f3-db43f02f7c96",
+      "name": "Retrieve Notes",
+      "type": "n8n-nodes-base.googleDocs",
+      "position": [
+        -180,
+        120
+      ],
+      "typeVersion": 2,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "ClLkHpoTBbZUR6dH",
+          "name": "Google Docs account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "df2f365d-68c5-4bf4-9cda-27803855857a",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "position": [
+        240,
+        -200
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d6f68b1c-a6a6-44d4-8686-dc4dcdde4767",
+              "name": "output",
+              "type": "string",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0d3b1249-d7be-4de8-95ca-e054f2bfbaab",
+      "name": "Chat Response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        700,
+        -200
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        220,
+        120
+      ],
+      "id": "45fe5716-969c-4ba0-855c-351958c76ca1",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Xmgf2omXp4G4WQdg",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Google cloud services\nhttps://console.cloud.google.com\n1. Create project ( top left corner)\n2. Apis and Services - left menu ( On Library : enabled your serivce )\n3. Oauth consent screen\n. External\n. Fill App\n. Developer contact\n. add your google account to test\n. complete the verification process\n. grant permission\n. Publish\n4. Create Credentials\n. Oauth creadential ID\n. Web application\n. add redirect Uri call back - your n8n - google uri\n->  ( ClientID + secret key include)\n5. Back to n8n node, sign in Google - Confirm\n\n",
+        "height": 440,
+        "width": 300
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        380
+      ],
+      "id": "74329ecc-0104-4ad7-9e43-417851320ad1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Alternative: choose model support tools",
+        "height": 200,
+        "width": 200,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        260,
+        420
+      ],
+      "id": "4f5bd1ad-cacf-455f-b94e-66d212ed7181",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-03-19T15:31:53.000Z",
+  "versionId": "dc100bc9-0eea-4aad-bcc1-f290f4af672d"
+}
