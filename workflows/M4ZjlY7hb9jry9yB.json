@@ -1,0 +1,358 @@
+{
+  "active": false,
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Git project": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save PR": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-03-25T14:30:25.423Z",
+  "id": "M4ZjlY7hb9jry9yB",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Github MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant. your role is to help user auto execute github with mcp\n\n## RULES  \n1. **Github**:  \n   - When received user input, get tool list one time to correct tool name and tool parameters.\n   - After create repository success, please extract name, Repository URL and save to project\n   - After create pull request success, please extract pr number save pull request\n\n## User input \n- User input will include 2 part are tool name and tool parameters\n## tool parameters\n- please evaluate user input parameters : Try to auto fill missing parameters and Remove invalid and unnecessary parameters.\n\n## tool name\n- Correct tool name by tool list\n\n### Save project\n- After you create repository, please save project with name, Repository Url\n### Save pull request\n- After you create a pull request success, update row 2 in sheet with pr number ",
+          "maxIterations": 4
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        160,
+        -20
+      ],
+      "id": "9e624818-ed81-4e66-a5bc-29b2f393d714",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        200
+      ],
+      "id": "f3e868bc-6811-4843-ac2f-99d6c50a2ff6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ebmnRJDrtWeDTA6d",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        280,
+        200
+      ],
+      "id": "904ea28a-7e50-482c-b2ed-14a65eee918d",
+      "name": "MCP Client",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "8XWFyvBlHNKlC13X",
+          "name": "MCP Client (STDIO) Github acc"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeTool",
+        "toolName": "={{ $fromAI('tool', 'selected tool to execute') }}",
+        "toolParameters": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Tool_Parameters', `pr_number is number type\nRemove invalid and unnecessary parameters`, 'json') }}"
+      },
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        420,
+        200
+      ],
+      "id": "ccf11924-135d-43cf-980a-4d35ec5709e3",
+      "name": "MCP Client1",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "8XWFyvBlHNKlC13X",
+          "name": "MCP Client (STDIO) Github acc"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Git AI Agent input project",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo",
+          "mode": "list",
+          "cachedResultName": "Project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "url": "=git@github.com:{{ $fromAI('repository_url').slice(19) }}.git",
+            "repo": "={{ $fromAI('name') }}",
+            "owner": "={{ $fromAI('repository_url').split('/')[3] }}"
+          },
+          "matchingColumns": [
+            "repo"
+          ],
+          "schema": [
+            {
+              "id": "repo",
+              "displayName": "repo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "owner",
+              "displayName": "owner",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        580,
+        200
+      ],
+      "id": "4c5c826e-af5a-4b7d-81d9-cb922508b740",
+      "name": "Git project",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "niIxLS6rZiECyLIH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        -20
+      ],
+      "id": "6dc2f758-74bc-4a5c-b47d-09c9c0289100",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use to update/save pr number",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo",
+          "mode": "list",
+          "cachedResultName": "Project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "pr number": "={{ $fromAI('pr_number') }}",
+            "repo": "={{ $fromAI('repo') }}"
+          },
+          "matchingColumns": [
+            "repo"
+          ],
+          "schema": [
+            {
+              "id": "repo",
+              "displayName": "repo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "owner",
+              "displayName": "owner",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "pr number",
+              "displayName": "pr number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        700,
+        200
+      ],
+      "id": "a8645d18-5a4e-4003-8280-180f35ea6466",
+      "name": "Save PR",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "niIxLS6rZiECyLIH",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-04-01T10:31:02.431Z",
+  "versionId": "f85921dc-96c7-42a5-b0d4-2ddbd1bd5a43"
+}
