@@ -1,0 +1,248 @@
+{
+  "active": false,
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Execute Github MCP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-03-27T03:21:48.542Z",
+  "id": "w7h07a5AnFIZTusw",
+  "meta": null,
+  "name": "Repository config",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -140,
+        140
+      ],
+      "id": "1cbb4dcc-c077-43f6-8a17-9f0807b543ab",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        500,
+        120
+      ],
+      "id": "1e129309-f652-46f6-ba39-ac4c28b86d28",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo",
+          "mode": "list",
+          "cachedResultName": "Project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0f5d286a-5eed-4bb4-9aca-300631e12cba",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "niIxLS6rZiECyLIH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\"repo\":\"{{ $('Google Sheets').last().json.repo}}\",\n\"repository_url\":\"{{ $('Google Sheets').last().json.url}}\",\n\"owner\":\"{{ $('Google Sheets').last().json.owner}}\",\n\"pr_number\": {{ $('Google Sheets').last().json['pr number'] ? $('Google Sheets').last().json['pr number'] : 0 }}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        320,
+        0
+      ],
+      "id": "d6d1a621-0298-4f0c-abe9-2dd31f2d1e09",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        160,
+        0
+      ],
+      "id": "ae36b22c-94de-4234-8d1a-f8c002b1d205",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "M4ZjlY7hb9jry9yB",
+          "mode": "list",
+          "cachedResultName": "Github MCP"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ $json.query }} with params repo: {{ $json.repo }}, owner :  {{ $json.owner }} , pr_number : {{ $json.pr_number }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        120
+      ],
+      "id": "9a3a02fe-461c-4822-97b2-229bd90c35b3",
+      "name": "Execute Github MCP"
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "merge pull request"
+        }
+      }
+    ],
+    "Aggregate1": [
+      {
+        "json": {
+          "data": [
+            {
+              "row_number": 2,
+              "repo": "ai_automation",
+              "url": "git@github.com:thanharmstrong86/ai_automation.git",
+              "owner": "thanharmstrong86",
+              "pr number": 9
+            },
+            {
+              "row_number": 3,
+              "repo": "n8n",
+              "url": "git@github.com:thanharmstrong86/n8n.git",
+              "owner": "thanharmstrong86",
+              "pr number": ""
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-04-01T10:30:45.311Z",
+  "versionId": "24454fdc-5635-46b0-8420-dfb456c02a20"
+}
