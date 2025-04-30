@@ -1,0 +1,364 @@
+{
+  "active": false,
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute GIT Command": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Git project": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-03-16T09:23:46.378Z",
+  "id": "gfOFg4MtbxmPegen",
+  "meta": {
+    "templateId": "1115",
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Git Client",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When Executed by Another Workflow').item.json.query }}",
+        "options": {
+          "systemMessage": "=You are a git tool assistant, your role is to help user auto execuate git command by using git execute command tools from user 's local repository\n\n## RULES  \n\n1. **Git Command**:  \n   - When the user sends a new message, evaluate whether it is relate with git.\n   - If input relate git, then send a full git command to execute tools to auto run. you will auto fill message for git command if user not input.\n\n## REPO \n\n### User is using repo: **{{ $json.data[0].repo }}**\n\n### Guidelines for Using Repo:  \n- Use the using repo for local repository which user want to handle and run git command\n\n## local_repository  \n\n### guidelines for Using local_repository: Agent sent local repository for git command tool to define where is the path to run git command\n\n### if git is clone project local_repository : /repositories \n\n### if git is not clone project local_repository : /repositories/{{ $json.data[0].repo }}\n\n## TOOLS\n### Execute GIT Command\n- Use this tool to execute a git commands which map with user input\n\n### Save repo\n- Use input project or repo, save to project sheet",
+          "maxIterations": 5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1540,
+        0
+      ],
+      "id": "36967387-4d80-4730-8e87-5b2c0ddbc975",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        240
+      ],
+      "id": "d691c21b-cbff-4035-8f03-c3eae9d7887e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ch0P4OmRB6XBfTK4",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Executes a git command",
+        "command": "=cd {{ $fromAI('local_repository') }}  && {{ $fromAI('command') }}"
+      },
+      "type": "n8n-nodes-base.executeCommandTool",
+      "typeVersion": 1,
+      "position": [
+        1820,
+        240
+      ],
+      "id": "5976354e-34eb-470d-91bf-66e6bb9d8a98",
+      "name": "Execute GIT Command"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1220,
+        0
+      ],
+      "id": "de28795f-a9bc-4e6b-bbd0-20b026d167b4",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo",
+          "mode": "list",
+          "cachedResultName": "Project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        700,
+        -120
+      ],
+      "id": "3d2f66fa-bdf0-443f-bf2a-ba4bd8155aef",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "niIxLS6rZiECyLIH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1380,
+        0
+      ],
+      "id": "2a83c24e-6da2-489a-80ae-9f4f03829a68",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\"repo\":\"{{ $('Google Sheets').last().json.repo}}\"}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1020,
+        -120
+      ],
+      "id": "4c1bb2f6-2447-4e69-8be6-54bc66cf205f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        860,
+        -120
+      ],
+      "id": "c27f16cd-2a13-40a6-9425-74f9055f4d16",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Git AI Agent input repo",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo",
+          "mode": "list",
+          "cachedResultName": "Project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EeFbuUrvR-pHS1urFH3NPbOA2FG6FJBxY2SNUv3Hvyo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "repo": "={{ $fromAI('repo') }}"
+          },
+          "matchingColumns": [
+            "repo"
+          ],
+          "schema": [
+            {
+              "id": "repo",
+              "displayName": "repo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "owner",
+              "displayName": "owner",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.5,
+      "position": [
+        1700,
+        240
+      ],
+      "id": "f307e14d-2a31-4a6e-9650-b368a52d822b",
+      "name": "Git project",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "niIxLS6rZiECyLIH",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        20
+      ],
+      "id": "cb47c14a-e40b-4467-9b85-d7ec29e7d745",
+      "name": "When Executed by Another Workflow"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-04-01T10:31:10.038Z",
+  "versionId": "5388952c-a103-4d89-bfab-685105c23b1c"
+}
