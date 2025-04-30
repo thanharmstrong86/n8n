@@ -1,0 +1,354 @@
+{
+  "active": false,
+  "connections": {
+    "Outline Writer": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outline Evaluation": {
+      "main": [
+        [
+          {
+            "node": "Blog Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Blog Writer": {
+      "main": [
+        [
+          {
+            "node": "Post to Docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Outline Writer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2.0 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Outline Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Blog Writer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Outline Evaluation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Outline Evaluation",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-04-01T05:41:47.947Z",
+  "id": "2xCzoqdVpGR01l1G",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Prompt Chaining",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the topic to write a blog about: {{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "# Overview\nYou are an expert outline writer. Your job is to generate a structured outline for a blog post with section titles and key points."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        160,
+        460
+      ],
+      "id": "8cf58f27-285f-4b54-a3f7-5e054bafb847",
+      "name": "Outline Writer"
+    },
+    {
+      "parameters": {
+        "content": "# Prompt Chaining\n ✅ Improved Accuracy and Quality – Each step focuses on a specific task, reducing errors and hallucinations.\n\n ✅ Greater Control Over Each Step – You can refine or tweak individual steps without affecting the entire process.\n\n ✅ Specialization Leads to More Effective AI Agents – Each AI agent becomes a specialist rather than a generalist, improving reliability.\n\n ✅ Easier Debugging and Optimization – If an output isn’t ideal, you only need to fix the weak link rather than redoing everything.\n\n ✅ More Scalable and Reusable Workflows – A structured, step-by-step workflow can be repurposed for different use cases.\n",
+        "height": 260,
+        "width": 940,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        240,
+        80
+      ],
+      "typeVersion": 1,
+      "id": "73a5923e-6d0f-4698-91f9-259ad8fa10c3",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here is the outline: \n\n{{ $('Outline Writer').item.json.output }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert blog evaluator. Revise this outline and ensure it covers the following key criteria: \n(1) Engaging Introduction \n(2) Clear Section Breakdown\n(3) Logical Flow\n(4) Conclusion with Key Takeaways\n\n## Output\nOnly output the revised outline."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        900,
+        440
+      ],
+      "id": "c8c162ad-d826-43d2-97ad-c7bfb86757eb",
+      "name": "Outline Evaluation"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Here if the revised outline: {{ $json.output }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert blog writer. Generate a detailed blog post using the outline with well-structured paragraphs and engaging content."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1240,
+        440
+      ],
+      "id": "8c250111-5018-4017-bdf3-2042c96ebffd",
+      "name": "Blog Writer"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "https://docs.google.com/document/d/1GH8LZX-k74pomeSnWM15zge1V3vip6_StTSqr9YdM9A/edit?usp=sharing",
+        "simple": false,
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1580,
+        440
+      ],
+      "id": "5b5d715a-cfe7-48e1-a2c8-16cf8e973c00",
+      "name": "Post to Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "ClLkHpoTBbZUR6dH",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -40,
+        460
+      ],
+      "id": "8238d6b6-60d2-4c27-88e7-b4a321ae4c43",
+      "name": "When chat message received",
+      "webhookId": "8b5d17e6-9356-437e-a97a-4f4027e6451d"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        160,
+        680
+      ],
+      "id": "a44f8672-5e30-491e-a67f-a4f8313fdefe",
+      "name": "2.0 Flash",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ch0P4OmRB6XBfTK4",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "deepseek-r1-distill-llama-70b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        680
+      ],
+      "id": "68df2931-667b-49af-b94f-8bddd829904a",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "LxcmTFKSzHi6C8Qh",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "nhamchithanh86@gmail.com",
+        "subject": "Blog outline review",
+        "message": "={{ $json.output }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        460
+      ],
+      "id": "b98145e4-0434-45a3-abe3-2fe88c3940d4",
+      "name": "Gmail",
+      "webhookId": "a290a1eb-fd3f-4b1c-89d2-9dd307f13cd0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "iaf53rD4JvmMshz8",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ed53c3b4-d2f3-4332-b3cd-231dbd04348e",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        680,
+        460
+      ],
+      "id": "6a5bff6a-4e32-4696-8481-6fb5ece2dc48",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        900,
+        680
+      ],
+      "id": "9f864148-cc69-4e45-808b-081499bff5aa",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ch0P4OmRB6XBfTK4",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2025-04-15T14:36:31.757Z",
+  "versionId": "884c291b-af99-45a0-a9b3-17ac3308d8cc"
+}
