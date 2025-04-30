@@ -1,0 +1,225 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-04-04T14:30:40.585Z",
+  "id": "sQbfjjOfIK5zMam3",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Supervisor",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d032bfa5-55b8-445b-b4d6-5a5b08f4eb6f",
+      "name": "When chat message received",
+      "webhookId": "0d9bdb3c-3738-45d4-9e44-199e6d951e6f"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        160,
+        200
+      ],
+      "id": "a5e7a1a8-eeb8-4c14-831c-e720cae177f7",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ch0P4OmRB6XBfTK4",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "CalendarAgent",
+        "description": "Use this tool for any calendar related actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "3RDnlzWWLIMqEdnx",
+          "mode": "list",
+          "cachedResultName": "Calendar Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        300,
+        220
+      ],
+      "id": "62728c30-d50c-4acb-a928-c6dab5357657",
+      "name": "Calendar"
+    },
+    {
+      "parameters": {
+        "name": "ContactAgent",
+        "description": "Use this tool for any contact related actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "BbzJWOvNVoYaoxAs",
+          "mode": "list",
+          "cachedResultName": "Contact Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        420,
+        220
+      ],
+      "id": "be30a734-ca2e-4377-8dea-7f2c24a61d9f",
+      "name": "Contact"
+    },
+    {
+      "parameters": {
+        "name": "EmailAgent",
+        "description": "Use this tool for any Email related actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "itXLzqPWZZRJXuqV",
+          "mode": "list",
+          "cachedResultName": "Email Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        540,
+        220
+      ],
+      "id": "0b66829c-0f3f-4b40-9af5-90ff6108914d",
+      "name": "Email"
+    },
+    {
+      "parameters": {
+        "content": "Send Thanh an email asking if he wanted to play squash tomorrow at 2pm. Also create an entry in my calendar\n1. Supervisor will call contact agent to fetch Thanh 's email address\n2. Supervisor send invite email to Thanh\n3. Supervisor create event on calendar",
+        "height": 140,
+        "width": 480
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        160,
+        -160
+      ],
+      "id": "a7b8e756-0a04-4815-a2de-f17f487bb3fc",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "# ROLE\nYou are an AI agent called Max.\nYour job is to orchestrate the activities between different agents and then formulate a friendly response back to the user.\nYou should never write emails, create content, create summaries yourself. Your job is to call agents and tools in the correct sequence.\nThink carefully about the sequence of events. Some tools might require you to first call another tool in order to pass it the correct information.\n\n# ADDITIONAL INFORMATION\n- You are talking to Leon.\n- The current date and time is {{ $now.toString() }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        0
+      ],
+      "id": "790fca43-43c0-4208-8365-aa0d30c0e093",
+      "name": "Supervisor"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-04-15T14:51:48.874Z",
+  "versionId": "3ac97122-162f-433d-a9d9-f1c006e21c5d"
+}
