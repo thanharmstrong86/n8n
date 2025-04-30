@@ -1,0 +1,198 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Github_MCP WF": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Git_Client WF": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-03-26T09:53:15.621Z",
+  "id": "UnJWvTe6YwaSHefO",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Repository assistance",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "cfd2e86d-f243-4bc4-89c9-218c40ef20fd",
+      "name": "When chat message received",
+      "webhookId": "4cf0e90b-ae51-4a34-a8f4-cd6fc1c4ac55"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a Repository assistant. Your role evaluate user input to choose git client command or github action to execute user input. \nIf input is related to git client comand then call git client workflow with flag : git\nIf input is related to github action then call github mcp work flow with flag : github"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        0
+      ],
+      "id": "972354e6-d760-424c-a8ac-94562b74a535",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        140,
+        240
+      ],
+      "id": "361e6654-953b-4936-be24-5df8567f5032",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ch0P4OmRB6XBfTK4",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "Github_MCP",
+        "description": "This Github workflow to execute github action",
+        "workflowId": {
+          "__rl": true,
+          "value": "w7h07a5AnFIZTusw",
+          "mode": "list",
+          "cachedResultName": "Repository config"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ $('When chat message received').item.json.chatInput }}"
+          },
+          "matchingColumns": [
+            "query"
+          ],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        340,
+        240
+      ],
+      "id": "0432ef33-bc39-4648-bb35-74e6651c6f0f",
+      "name": "Github_MCP WF"
+    },
+    {
+      "parameters": {
+        "name": "Git_Client",
+        "description": "This tool is use git command to execute input relate to git client",
+        "workflowId": {
+          "__rl": true,
+          "value": "gfOFg4MtbxmPegen",
+          "mode": "list",
+          "cachedResultName": "Git Client"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "query": "={{ $fromAI('query', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        240
+      ],
+      "id": "5f94faa3-87dd-4ffa-957f-9ac007638329",
+      "name": "Git_Client WF"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-04-01T10:30:54.452Z",
+  "versionId": "81350f24-0315-43a7-9811-bd0039a5cd4b"
+}
