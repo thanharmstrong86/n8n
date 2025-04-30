@@ -1,0 +1,222 @@
+{
+  "active": false,
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "MCP Firecrawl Execute": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Firecrawl List": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-03-18T10:47:20.882Z",
+  "id": "lPyK4dtrf86JjO8p",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "MCP - Firecrawl",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        20,
+        0
+      ],
+      "id": "8189c14f-87d3-4d09-a018-62664b2cac1e",
+      "name": "When chat message received",
+      "webhookId": "2a96392f-b15b-414e-872f-c56d80df20ed",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        0
+      ],
+      "id": "df144931-842a-4959-9f8c-ddd07856df7f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "deepseek-r1-distill-llama-70b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        40,
+        380
+      ],
+      "id": "219c43e9-fb8c-41c2-a792-82aab72607f9",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "LxcmTFKSzHi6C8Qh",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro-preview-03-25",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -100,
+        380
+      ],
+      "id": "4b9503b3-be3c-4af4-8dd5-719bf87256a4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ch0P4OmRB6XBfTK4",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeTool",
+        "toolName": "={{ $fromAI('tool', 'selected tool to execute') }}",
+        "toolParameters": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Tool_Parameters', ``, 'json') }}"
+      },
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        460,
+        220
+      ],
+      "id": "87d166b0-3bd8-4f17-9e92-635ee15ee6e5",
+      "name": "MCP Firecrawl Execute",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "aQhU0XdeT7KhdUVi",
+          "name": "MCP Client (STDIO) account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-mcp.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        340,
+        220
+      ],
+      "id": "dc1848da-5248-4ef8-8a5a-0efa5aaabb0a",
+      "name": "MCP Firecrawl List",
+      "credentials": {
+        "mcpClientApi": {
+          "id": "aQhU0XdeT7KhdUVi",
+          "name": "MCP Client (STDIO) account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "1. Install in setting, custom node : \nn8n-nodes-mcp (client)\n2. MCP server selfhost https://github.com/mendableai/firecrawl-mcp-server. \nget args for client config: -y firecrawl-mcp.\nEnvironment : FIRECRAWL_API_KEY ( cloud or selfhost)\nFIRECRAWL_API_URL () self host)\n3. Firecrawl - MCP server cloud:\nhttps://www.firecrawl.dev/app/logs\n- sign up and get api key",
+        "height": 320,
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        0
+      ],
+      "id": "0687d2df-dc6f-438d-a5f8-2c42f6ecb5f0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        240
+      ],
+      "id": "570f64a3-f0f7-49d7-b97a-eb1cfe6ee452",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ebmnRJDrtWeDTA6d",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2025-04-18T14:44:12.773Z",
+  "versionId": "5b9175bc-2d01-434f-8aaf-23d2c7a28b45"
+}
