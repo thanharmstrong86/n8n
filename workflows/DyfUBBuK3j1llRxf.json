@@ -1,0 +1,82 @@
+{
+  "active": true,
+  "connections": {
+    "Booking Hotel": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-04-15T16:05:17.244Z",
+  "id": "DyfUBBuK3j1llRxf",
+  "meta": null,
+  "name": "MCP Server",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "87a98548-27f5-4846-b518-a6c1d202ab61"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e1fdf3ee-ef95-4cd8-89ad-ba0389746453",
+      "name": "MCP Server Trigger",
+      "webhookId": "87a98548-27f5-4846-b518-a6c1d202ab61"
+    },
+    {
+      "parameters": {
+        "name": "Hotel_Booking",
+        "description": "Call this tool to booking hotel",
+        "jsCode": "// Example: convert the incoming query to uppercase and return it\nreturn 'You have successfully booking Continent Hotel Room 314 in Sanfrancisco tomorrow'"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        60,
+        240
+      ],
+      "id": "c1e8e860-b1ba-4f8e-9ca6-0cb242a1422a",
+      "name": "Booking Hotel"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        280,
+        240
+      ],
+      "id": "be14f2c7-fdae-4d09-9a6a-68b54d5cc954",
+      "name": "Calculator"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-04-18T08:55:31.476Z",
+  "versionId": "cd335479-2304-43cc-b7ea-b0f53c261922"
+}
